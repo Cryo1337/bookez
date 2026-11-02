@@ -1,0 +1,130 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>BookIt</title>
+<style>
+:root{--bg:#faf8f5;--cd:#fff;--tx:#1d1b18;--mu:#6b665e;--ac:#c2410c;--bd:#e6e1d8;--ok:#15803d;--no:#b91c1c;--wa:#b45309;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17150f;--cd:#221f18;--tx:#f1ede4;--mu:#a29c8f;--ac:#fb923c;--bd:#38342a;--ok:#4ade80;--no:#f87171;--wa:#fbbf24;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#17150f;--cd:#221f18;--tx:#f1ede4;--mu:#a29c8f;--ac:#fb923c;--bd:#38342a;--ok:#4ade80;--no:#f87171;--wa:#fbbf24;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--bd);background:var(--cd)}
+.logo{font-weight:800;font-size:20px;color:var(--ac);cursor:pointer}nav{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+main{max-width:980px;margin:0 auto;padding:16px}
+button,select,input,textarea{font:inherit;color:var(--tx);background:var(--cd);border:1px solid var(--bd);border-radius:8px;padding:8px 10px}
+button{cursor:pointer}button.p{background:var(--ac);color:#fff;border-color:var(--ac)}button.p:disabled,.d:disabled{opacity:.4;cursor:default}
+.card{background:var(--cd);border:1px solid var(--bd);border-radius:12px;padding:14px;margin:10px 0}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.sp{justify-content:space-between}
+.grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.chip.on,.tab.on,.d.sel,.sl.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.mu{color:var(--mu);font-size:13px}label{display:block;margin:8px 0 3px;font-size:13px;color:var(--mu)}
+input,select,textarea{width:100%}input[type=checkbox]{width:auto}
+.b{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:600;border:1px solid currentColor}
+.pending{color:var(--wa)}.accepted{color:var(--ok)}.denied{color:var(--no)}
+.cal{max-width:340px}.ch{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.g{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center}.g i{font-size:12px;color:var(--mu);font-style:normal}
+.d{padding:8px 0;position:relative}.d sup{color:var(--ac);font-weight:700;margin-left:2px}.d.sel sup{color:#fff}
+.sls{display:flex;gap:6px;flex-wrap:wrap}.msg{background:var(--ac);color:#fff;padding:10px 14px;border-radius:8px;margin-bottom:10px}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}.tabs button{white-space:nowrap}
+.sc{overflow-x:auto}table{border-collapse:collapse;width:100%}td,th{padding:6px 8px;border-bottom:1px solid var(--bd);text-align:left}
+</style></head><body><header><div class="logo" onclick="go({view:'home'})">📅 BookIt</div><nav id="nv"></nav></header><main id="app"></main>
+<script>
+const T={en:{browse:"Browse",mybk:"My bookings",dash:"Dashboard",login:"Log in",logout:"Log out",register:"Register",email:"Email",pass:"Password",name:"Full name",client:"Client",business:"Business",bname:"Business name",cat:"Category",city:"City",phone:"Phone number",all:"All",dining:"Dining",barber:"Barber & beauty",auto:"Auto mechanic",medical:"Medical clinic",search:"Search name or item…",sortn:"Sort: name",sortp:"Sort: lowest price",from:"from",avg:"avg",noRes:"Nothing found.",menu:"Menu",services:"Services & prices",pick:"Pick a date",time:"Pick a time",noslots:"No free slots this day.",emp:"Employee",any:"Anyone available",note:"Note (optional)",total:"Total",submit:"Request booking",needLogin:"Log in as a client to book.",pending:"Pending",accepted:"Accepted",denied:"Denied",reason:"Reason",accept:"Accept",deny:"Deny",confirmDeny:"Confirm denial",r_full:"Fully booked",r_closed:"Closed that day",r_staff:"Employee unavailable",r_emerg:"Emergency / unexpected issue",r_other:"Other",t_res:"Reservations",t_cal:"Calendar",t_svc:"Menu / services",t_sch:"Schedule",t_emp:"Employees",t_cus:"Customers",add:"Add",price:"Price (RON)",closed:"Closed",open:"Open",fromT:"From",toT:"To",sent:"Booking request sent!",none:"No bookings yet.",visits:"Bookings",last:"Last",back:"← Back",phoneHelp:"The business may call you if something changes.",bad:"Wrong email or password.",exists:"Email already used.",req:"Please fill in all required fields.",badPhone:"Enter a valid phone number.",pickDT:"Select a date and time.",bphone:"Business phone",del:"Delete",today:"Day bookings",demo:"Prototype: data is saved only in this browser.",wd:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],hasAcc:"Have an account?",noAcc:"New here?",call:"Call",dnote:"Details for the client (optional)"},
+ro:{browse:"Explorează",mybk:"Rezervările mele",dash:"Panou",login:"Autentificare",logout:"Deconectare",register:"Înregistrare",email:"Email",pass:"Parolă",name:"Nume complet",client:"Client",business:"Firmă",bname:"Numele firmei",cat:"Categorie",city:"Oraș",phone:"Număr de telefon",all:"Toate",dining:"Restaurante",barber:"Frizerie & înfrumusețare",auto:"Service auto",medical:"Clinici medicale",search:"Caută nume sau produs…",sortn:"Sortare: nume",sortp:"Sortare: preț mic",from:"de la",avg:"medie",noRes:"Nimic găsit.",menu:"Meniu",services:"Servicii și prețuri",pick:"Alege data",time:"Alege ora",noslots:"Nu sunt locuri libere în această zi.",emp:"Angajat",any:"Oricine disponibil",note:"Observații (opțional)",total:"Total",submit:"Trimite rezervarea",needLogin:"Autentifică-te ca client pentru a rezerva.",pending:"În așteptare",accepted:"Acceptată",denied:"Refuzată",reason:"Motiv",accept:"Acceptă",deny:"Refuză",confirmDeny:"Confirmă refuzul",r_full:"Complet ocupat",r_closed:"Închis în acea zi",r_staff:"Angajat indisponibil",r_emerg:"Urgență / problemă neprevăzută",r_other:"Altul",t_res:"Rezervări",t_cal:"Calendar",t_svc:"Meniu / servicii",t_sch:"Program",t_emp:"Angajați",t_cus:"Clienți",add:"Adaugă",price:"Preț (RON)",closed:"Închis",open:"Deschis",fromT:"De la",toT:"Până la",sent:"Cererea de rezervare a fost trimisă!",none:"Nicio rezervare încă.",visits:"Rezervări",last:"Ultima",back:"← Înapoi",phoneHelp:"Firma te poate suna dacă apare o schimbare.",bad:"Email sau parolă greșită.",exists:"Email deja folosit.",req:"Completează toate câmpurile obligatorii.",badPhone:"Introdu un număr de telefon valid.",pickDT:"Alege data și ora.",bphone:"Telefon firmă",del:"Șterge",today:"Rezervările zilei",demo:"Prototip: datele se salvează doar în acest browser.",wd:["Lun","Mar","Mie","Joi","Vin","Sâm","Dum"],hasAcc:"Ai deja cont?",noAcc:"Nou aici?",call:"Sună",dnote:"Detalii pentru client (opțional)"}};
+const CATS=["dining","barber","auto","medical"],CITIES=["București","Cluj-Napoca","Timișoara","Iași","Brașov"],RS=["r_full","r_closed","r_staff","r_emerg","r_other"];
+const $=s=>document.querySelector(s),uid=()=>Math.random().toString(36).slice(2,9);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ymd=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"),today=()=>ymd(new Date());
+function seed(){const H={0:null,1:["09:00","18:00"],2:["09:00","18:00"],3:["09:00","18:00"],4:["09:00","18:00"],5:["09:00","18:00"],6:["10:00","14:00"]};
+const mk=(n,c,ct,sv,em)=>({id:uid(),owner:"seed",name:n,cat:c,city:ct,phone:"0721 000 000",hours:H,svc:sv.map(([a,p])=>({id:uid(),name:a,price:p})),emps:em.map(x=>({id:uid(),name:x}))});
+return{lang:"en",me:null,users:[],bk:[],biz:[
+mk("La Mama Bistro","dining","București",[["Ciorbă de burtă",22],["Mici cu muștar",28],["Paste carbonara",38],["Papanași",26]],["Ana","Radu"]),
+mk("Casa Ardeleană","dining","Cluj-Napoca",[["Tochitură",42],["Sarmale",35],["Papanași",24]],["Ioana"]),
+mk("Fade Barbers","barber","București",[["Tuns bărbați",70],["Barbă",40],["Tuns + barbă",100]],["Vlad","Mihai"]),
+mk("AutoPro Service","auto","Timișoara",[["Schimb ulei",180],["Diagnoză",120],["Revizie completă",450]],["Dan"]),
+mk("Clinica Sănătate","medical","București",[["Consult medicină de familie",200],["Analize de sânge",150],["Ecografie",250]],["Dr. Popescu","Dr. Ionescu"])]}}
+let D;try{D=JSON.parse(localStorage.getItem("bk"))}catch(e){}if(!D)D=seed();
+const save=()=>{try{localStorage.setItem("bk",JSON.stringify(D))}catch(e){}};
+const t=k=>T[D.lang][k]??k,L=()=>D.lang=="ro"?"ro-RO":"en-GB";
+const now=new Date();let S={view:"home",cat:"",city:"",q:"",sort:"n",bid:null,date:"",time:"",emp:"",sv:[],phone:"",note:"",mo:{y:now.getFullYear(),m:now.getMonth()},tab:"res",cd:"",deny:null,dr:"r_full",dn:"",mode:"login",role:"client",msg:""};
+const me=()=>D.users.find(u=>u.id==D.me),myBiz=()=>D.biz.find(b=>b.owner==D.me),bz=id=>D.biz.find(b=>b.id==id);
+const mn=b=>b.svc.length?Math.min(...b.svc.map(s=>s.price)):0,av=b=>b.svc.length?Math.round(b.svc.reduce((a,s)=>a+s.price,0)/b.svc.length):0;
+function go(p){Object.assign(S,p||{});render()}
+function flash(m){S.msg=m;render();scrollTo(0,0)}
+function render(){const u=me();
+$("#nv").innerHTML=`<button onclick="go({view:'home'})">${t("browse")}</button>`+(u?(u.role=="business"?`<button onclick="go({view:'dash'})">${t("dash")}</button>`:`<button onclick="go({view:'mine'})">${t("mybk")}</button>`)+`<button onclick="out()">${t("logout")}</button>`:`<button class="p" onclick="go({view:'auth'})">${t("login")}</button>`)+`<button onclick="lang()">${D.lang=="en"?"RO":"EN"}</button>`;
+let v=S.view=="home"?home():S.view=="biz"?bizPage():S.view=="auth"?auth():S.view=="mine"?mine():dash();
+$("#app").innerHTML=(S.msg?`<div class="msg">${esc(S.msg)}</div>`:"")+v+`<p class="mu">${t("demo")}</p>`;S.msg=""}
+function lang(){D.lang=D.lang=="en"?"ro":"en";document.documentElement.lang=D.lang;save();render()}
+function out(){D.me=null;save();go({view:"home"})}
+function home(){const cities=[...new Set([...CITIES,...D.biz.map(b=>b.city)])];
+const l=D.biz.filter(b=>(!S.cat||b.cat==S.cat)&&(!S.city||b.city==S.city)&&(!S.q||(b.name+b.svc.map(s=>s.name).join()).toLowerCase().includes(S.q.toLowerCase()))).sort(S.sort=="p"?(a,b)=>mn(a)-mn(b):(a,b)=>a.name.localeCompare(b.name));
+return`<div class="row">${["",...CATS].map(c=>`<button class="chip ${S.cat==c?"on":""}" onclick="go({cat:'${c}'})">${c?t(c):t("all")}</button>`).join("")}</div>
+<div class="row" style="margin:10px 0"><select style="width:auto" onchange="go({city:this.value})"><option value="">${t("city")}: ${t("all")}</option>${cities.map(c=>`<option ${S.city==c?"selected":""}>${esc(c)}</option>`).join("")}</select>
+<input style="flex:1;min-width:160px;width:auto" placeholder="${t("search")}" value="${esc(S.q)}" onchange="go({q:this.value})">
+<select style="width:auto" onchange="go({sort:this.value})"><option value="n">${t("sortn")}</option><option value="p" ${S.sort=="p"?"selected":""}>${t("sortp")}</option></select></div>
+<div class="grid">${l.map(b=>`<div class="card" style="cursor:pointer" onclick="go({view:'biz',bid:'${b.id}',date:'',time:'',sv:[],emp:'',mo:{y:now.getFullYear(),m:now.getMonth()}});scrollTo(0,0)"><b>${esc(b.name)}</b><div class="mu">${t(b.cat)} · ${esc(b.city)}</div><div style="margin-top:6px">${t("from")} <b>${mn(b)} RON</b> <span class="mu">· ${t("avg")} ${av(b)} RON</span></div></div>`).join("")||`<p class="mu">${t("noRes")}</p>`}</div>`}
+function cal(mode,b){const{y,m}=S.mo,f=new Date(y,m,1),off=(f.getDay()+6)%7,n=new Date(y,m+1,0).getDate();
+let h=`<div class="cal"><div class="ch"><button onclick="nav(-1)">‹</button><b>${f.toLocaleDateString(L(),{month:"long",year:"numeric"})}</b><button onclick="nav(1)">›</button></div><div class="g">`+t("wd").map(d=>`<i>${d}</i>`).join("")+"<span></span>".repeat(off);
+for(let d=1;d<=n;d++){const dt=new Date(y,m,d),ds=ymd(dt);let dis=0,c=0;
+if(mode=="book")dis=ds<today()||!b.hours[dt.getDay()];else c=D.bk.filter(x=>x.bid==b.id&&x.date==ds&&x.st!="denied").length;
+h+=`<button class="d ${(mode=="book"?S.date:S.cd)==ds?"sel":""}" ${dis?"disabled":""} onclick="pk('${ds}')">${d}${c?`<sup>${c}</sup>`:""}</button>`}
+return h+"</div></div>"}
+function nav(k){let{y,m}=S.mo;m+=k;if(m<0){m=11;y--}if(m>11){m=0;y++}go({mo:{y,m}})}
+function pk(ds){S.view=="biz"?go({date:ds,time:""}):go({cd:ds})}
+function slots(b,ds){const h=b.hours[new Date(ds+"T00:00").getDay()];if(!h)return[];const out=[];
+for(let x=+h[0].slice(0,2);x<+h[1].slice(0,2);x++){const tm=String(x).padStart(2,"0")+":00";
+if(ds==today()&&tm<=new Date().toTimeString().slice(0,5))continue;
+const cnt=D.bk.filter(k=>k.bid==b.id&&k.date==ds&&k.time==tm&&k.st!="denied"&&(!S.emp||k.emp==S.emp)).length;
+if(cnt<(S.emp?1:Math.max(1,b.emps.length)))out.push(tm)}return out}
+function bizPage(){const b=bz(S.bid),u=me(),sl=S.date?slots(b,S.date):[];
+const tot=b.svc.filter(s=>S.sv.includes(s.id)).reduce((a,s)=>a+s.price,0);
+return`<button onclick="go({view:'home'})">${t("back")}</button><div class="card"><h2 style="margin:0">${esc(b.name)}</h2><div class="mu">${t(b.cat)} · ${esc(b.city)} · ${esc(b.phone)}</div></div>
+<div class="card"><h3 style="margin-top:0">${b.cat=="dining"?t("menu"):t("services")}</h3><table>${b.svc.map(s=>`<tr><td><label style="margin:0;color:inherit;font-size:15px"><input type="checkbox" ${S.sv.includes(s.id)?"checked":""} onchange="tg('${s.id}')"> ${esc(s.name)}</label></td><td style="text-align:right"><b>${s.price} RON</b></td></tr>`).join("")}</table></div>
+<div class="card">${u&&u.role=="client"?`<div class="row" style="align-items:flex-start"><div><label>${t("pick")}</label>${cal("book",b)}</div><div style="flex:1;min-width:230px">
+<label>${t("emp")}</label><select onchange="go({emp:this.value,time:''})"><option value="">${t("any")}</option>${b.emps.map(e=>`<option value="${e.id}" ${S.emp==e.id?"selected":""}>${esc(e.name)}</option>`).join("")}</select>
+${S.date?`<label>${t("time")}</label><div class="sls">${sl.map(x=>`<button class="sl ${S.time==x?"on":""}" onclick="go({time:'${x}'})">${x}</button>`).join("")||`<span class="mu">${t("noslots")}</span>`}</div>`:""}
+<label>${t("phone")} *</label><input type="tel" value="${esc(S.phone)}" oninput="S.phone=this.value" placeholder="07xx xxx xxx"><div class="mu">${t("phoneHelp")}</div>
+<label>${t("note")}</label><textarea rows="2" oninput="S.note=this.value">${esc(S.note)}</textarea>
+<div class="row sp" style="margin-top:10px"><b>${t("total")}: ${tot} RON</b><button class="p" onclick="book()">${t("submit")}</button></div></div></div>`:`<p>${t("needLogin")}</p><button class="p" onclick="go({view:'auth'})">${t("login")}</button>`}</div>`}
+function tg(id){S.sv=S.sv.includes(id)?S.sv.filter(x=>x!=id):[...S.sv,id];render()}
+function book(){const b=bz(S.bid),u=me();if(!S.date||!S.time)return flash(t("pickDT"));
+if(S.phone.replace(/\D/g,"").length<6)return flash(t("badPhone"));
+D.bk.push({id:uid(),bid:b.id,uid:u.id,cn:u.name,date:S.date,time:S.time,sv:S.sv.slice(),emp:S.emp,phone:S.phone.trim(),note:S.note,st:"pending",rs:"",rn:""});save();
+S.sv=[];S.date="";S.time="";S.note="";S.view="mine";flash(t("sent"))}
+function auth(){const reg=S.mode=="register",bs=reg&&S.role=="business";
+return`<div class="card" style="max-width:420px;margin:auto"><h2 style="margin-top:0">${reg?t("register"):t("login")}</h2>
+${reg?`<div class="row"><button class="chip ${S.role=="client"?"on":""}" onclick="go({role:'client'})">${t("client")}</button><button class="chip ${bs?"on":""}" onclick="go({role:'business'})">${t("business")}</button></div><label>${t("name")}</label><input id="a_n">`:""}
+<label>${t("email")}</label><input id="a_e" type="email"><label>${t("pass")}</label><input id="a_p" type="password">
+${bs?`<label>${t("bname")}</label><input id="a_b"><label>${t("cat")}</label><select id="a_c">${CATS.map(c=>`<option value="${c}">${t(c)}</option>`).join("")}</select><label>${t("city")}</label><input id="a_t" list="cl"><datalist id="cl">${CITIES.map(c=>`<option>${c}</option>`).join("")}</datalist><label>${t("bphone")}</label><input id="a_h" type="tel">`:""}
+<div class="row sp" style="margin-top:12px"><button class="p" onclick="doAuth()">${reg?t("register"):t("login")}</button><a href="#" onclick="go({mode:'${reg?"login":"register"}'});return false">${reg?t("hasAcc"):t("noAcc")} ${reg?t("login"):t("register")}</a></div></div>`}
+function doAuth(){const v=i=>($("#"+i)?.value||"").trim(),e=v("a_e").toLowerCase(),p=v("a_p");
+if(S.mode=="login"){const u=D.users.find(x=>x.email==e&&x.pw==p);if(!u)return flash(t("bad"));D.me=u.id;save();return go({view:u.role=="business"?"dash":"home"})}
+const bs=S.role=="business";if(!e||!p||!v("a_n")||(bs&&(!v("a_b")||!v("a_t")||!v("a_h"))))return flash(t("req"));
+if(D.users.some(x=>x.email==e))return flash(t("exists"));
+const u={id:uid(),name:v("a_n"),email:e,pw:p,role:S.role};D.users.push(u);D.me=u.id;
+if(bs)D.biz.push({id:uid(),owner:u.id,name:v("a_b"),cat:v("a_c"),city:v("a_t"),phone:v("a_h"),hours:{0:null,1:["09:00","18:00"],2:["09:00","18:00"],3:["09:00","18:00"],4:["09:00","18:00"],5:["09:00","18:00"],6:null},svc:[],emps:[]});
+save();go({view:bs?"dash":"home"})}
+function bcard(k,b){const s=k.sv.map(i=>b.svc.find(x=>x.id==i)?.name).filter(Boolean).join(", "),e=b.emps.find(x=>x.id==k.emp)?.name;return{s,e}}
+function mine(){const l=D.bk.filter(k=>k.uid==D.me).sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time));
+return`<h2>${t("mybk")}</h2>`+(l.map(k=>{const b=bz(k.bid),x=bcard(k,b);return`<div class="card"><div class="row sp"><b>${esc(b.name)}</b><span class="b ${k.st}">${t(k.st)}</span></div><div>${k.date} · ${k.time}</div><div class="mu">${esc(x.s)} ${x.e?"· "+esc(x.e):""}</div>
+${k.st=="denied"?`<div style="color:var(--no);margin-top:6px"><b>${t("reason")}:</b> ${t(k.rs)}${k.rn?" — "+esc(k.rn):""}</div><a href="tel:${esc(b.phone)}">${t("call")} ${esc(b.phone)}</a>`:""}</div>`}).join("")||`<p class="mu">${t("none")}</p>`)}
+function dash(){const b=myBiz();if(!b)return`<p>${t("needLogin")}</p>`;const tabs=["res","cal","svc","sch","emp","cus"];
+return`<h2 style="margin-top:0">${esc(b.name)} <span class="mu">${t(b.cat)} · ${esc(b.city)}</span></h2><div class="tabs">${tabs.map(x=>`<button class="tab ${S.tab==x?"on":""}" onclick="go({tab:'${x}'})">${t("t_"+x)}</button>`).join("")}</div><div style="margin-top:10px">${tabHtml(b)}</div>`}
+function bkRow(k,b){const x=bcard(k,b),ds=S.deny==k.id;
+return`<div class="card"><div class="row sp"><b>${esc(k.cn)}</b><span class="b ${k.st}">${t(k.st)}</span></div><div>${k.date} · ${k.time}</div><div class="mu">${esc(x.s)} ${x.e?"· "+esc(x.e):""}${k.note?" · “"+esc(k.note)+"”":""}</div><div><a href="tel:${esc(k.phone)}">📞 ${esc(k.phone)}</a></div>
+${k.st=="pending"&&!ds?`<div class="row" style="margin-top:8px"><button class="p" onclick="setSt('${k.id}','accepted')">${t("accept")}</button><button onclick="go({deny:'${k.id}',dr:'r_full',dn:''})">${t("deny")}</button></div>`:""}
+${ds?`<label>${t("reason")}</label><select onchange="S.dr=this.value">${RS.map(r=>`<option value="${r}" ${S.dr==r?"selected":""}>${t(r)}</option>`).join("")}</select><label>${t("dnote")}</label><input oninput="S.dn=this.value"><div class="row" style="margin-top:8px"><button class="p" onclick="setSt('${k.id}','denied')">${t("confirmDeny")}</button><button onclick="go({deny:null})">✕</button></div>`:""}</div>`}
+function setSt(id,st){const k=D.bk.find(x=>x.id==id);k.st=st;if(st=="denied"){k.rs=S.dr;k.rn=S.dn.trim()}S.deny=null;save();render()}
+function tabHtml(b){const bk=D.bk.filter(k=>k.bid==b.id).sort((a,c)=>(a.st=="pending"?0:1)-(c.st=="pending"?0:1)||(a.date+a.time).localeCompare(c.date+c.time));
+if(S.tab=="res")return bk.map(k=>bkRow(k,b)).join("")||`<p class="mu">${t("none")}</p>`;
+if(S.tab=="cal")return`<div class="row" style="align-items:flex-start">${cal("biz",b)}<div style="flex:1;min-width:240px">${S.cd?`<b>${t("today")}: ${S.cd}</b>`+(bk.filter(k=>k.date==S.cd).map(k=>bkRow(k,b)).join("")||`<p class="mu">${t("none")}</p>`):""}</div></div>`;
+if(S.tab=="svc")return`<div class="card"><table>${b.svc.map(s=>`<tr><td>${esc(s.name)}</td><td>${s.price} RON</td><td><button onclick="rm('svc','${s.id}')">${t("del")}</button></td></tr>`).join("")}</table>
+<div class="row" style="margin-top:10px"><input id="s_n" style="flex:2;width:auto" placeholder="${t("t_svc")}"><input id="s_p" type="number" min="0" style="flex:1;width:auto" placeholder="${t("price")}"><button class="p" onclick="addSvc()">${t("add")}</button></div></div>`;
+if(S.tab=="sch")return`<div class="card">${[1,2,3,4,5,6,0].map(d=>{const h=b.hours[d];return`<div class="row" style="margin:6px 0"><b style="width:44px">${t("wd")[(d+6)%7]}</b><label style="margin:0;color:inherit"><input type="checkbox" ${h?"checked":""} onchange="hr(${d},0,this.checked)"> ${t("open")}</label>${h?`<input type="time" style="width:auto" value="${h[0]}" onchange="hr(${d},1,this.value)"><input type="time" style="width:auto" value="${h[1]}" onchange="hr(${d},2,this.value)">`:`<span class="mu">${t("closed")}</span>`}</div>`}).join("")}</div>`;
+if(S.tab=="emp")return`<div class="card"><table>${b.emps.map(e=>`<tr><td>${esc(e.name)}</td><td><button onclick="rm('emps','${e.id}')">${t("del")}</button></td></tr>`).join("")}</table><div class="row" style="margin-top:10px"><input id="e_n" style="flex:1;width:auto" placeholder="${t("name")}"><button class="p" onclick="addEmp()">${t("add")}</button></div></div>`;
+const c={};bk.forEach(k=>{const o=c[k.uid]=c[k.uid]||{n:k.cn,p:k.phone,c:0,l:""};o.c++;o.p=k.phone;if(k.date>o.l)o.l=k.date});
+return`<div class="card sc"><table><tr><th>${t("name")}</th><th>${t("phone")}</th><th>${t("visits")}</th><th>${t("last")}</th></tr>${Object.values(c).map(o=>`<tr><td>${esc(o.n)}</td><td><a href="tel:${esc(o.p)}">${esc(o.p)}</a></td><td>${o.c}</td><td>${o.l}</td></tr>`).join("")}</table></div>`}
+function rm(k,id){const b=myBiz();b[k]=b[k].filter(x=>x.id!=id);save();render()}
+function addSvc(){const n=$("#s_n").value.trim(),p=+$("#s_p").value;if(!n||!(p>=0)||$("#s_p").value==="")return flash(t("req"));myBiz().svc.push({id:uid(),name:n,price:p});save();render()}
+function addEmp(){const n=$("#e_n").value.trim();if(!n)return flash(t("req"));myBiz().emps.push({id:uid(),name:n});save();render()}
+function hr(d,i,v){const b=myBiz();if(i==0)b.hours[d]=v?["09:00","18:00"]:null;else b.hours[d][i-1]=v;save();render()}
+render();
+</script></body></html>
